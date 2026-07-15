@@ -1,0 +1,112 @@
+<html>
+    <head>
+        <title> Pastry Log - Count </title>
+        <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@5.0.8/dist/jspdf.plugin.autotable.min.js"></script>
+        <link rel="stylesheet" href="pastry-log.css">
+    </head>
+
+    <body>
+        <h1> Pastry Log &#129360 </h1>
+
+        <a href="tracker.html"><button class="link-btn"> Go to Tracker! </button></a><br><br>
+
+        <div class="form-container">
+            <input type="text" id="pastryName" name="pastryName" style="width: 250px;" placeholder="Enter Pastry">
+            <button class="add-btn" onclick="addPastryRow()"> Add </button><br>
+        </div>
+
+        <div class="contaner2"> 
+            <label> Date: </label>
+            <input type="date" id="current-date">
+            <button class="download-btn" onclick="downloadPDF()"> Download Count as PDF </button><br><br>
+        </div>
+
+        <table id="countTable">
+            <thead>
+                <tr>
+                    <th>   </th>
+                    <th> Pastry </th>
+                    <th> Quantity </th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- new dynamic rows that will be added based on input -->
+            </tbody>
+        </table><br>
+
+        <script>
+            document.getElementById("current-date").valueAsDate = new Date();
+        
+            function addPastryRow() {
+                const pastryInput = document.getElementById("pastryName");
+                const pastryName = pastryInput.value.trim();
+                const tableBody = document.getElementById("tableBody");
+                const row = tableBody.insertRow();
+
+                if(pastryName === "") {
+                    alert("Please enter Pastry!");
+                    return;
+                }
+
+                row.insertCell(0).innerHTML = 
+                    '<button class="delete-btn" onclick="deleteRow(this)"> X </button>';
+                row.insertCell(1).textContent = pastryName;
+                row.insertCell(2).innerHTML = 
+                    '<input type="number" class="qty-input" min="0" value="0">';
+                pastryInput.value = "";
+            }
+
+            function deleteRow(button) {
+                button.closest("tr").remove();
+            }
+
+            async function downloadPDF() {
+                const {jsPDF} = window.jspdf;
+                const tableClone = document.getElementById("countTable").cloneNode(true);
+
+                // remove first col from every row
+                tableClone.querySelectorAll("tr").forEach(row => {
+                    if(row.cells.length > 0) {
+                        row.deleteCell(0);
+                    }
+                });
+
+                // add cloned table temp to DOM
+                const tempDiv = document.createElement("div");
+
+                tempDiv.style.position = "absolute";
+                tempDiv.style.left = "-9999px";
+                tempDiv.appendChild(tableClone);
+                document.body.appendChild(tempDiv);
+
+                const date = document.getElementById("current-date").value;
+                const pdf = new jsPDF({
+                    orientation: "portrait",
+                    unit: "mm", 
+                    format: "a4"
+                });
+
+                // header in pdf
+                pdf.setFontSize(20);
+                pdf.text("Pastry Tracker", 14, 15);
+                pdf.setFontSize(18);
+                pdf.text(`Date: ${date}`, 14, 25);
+                //table in pdf
+                pdf.autoTable({
+                    html: tableClone,
+                    startY: 30,
+                    theme: "grid",
+                    headStyles: {fillColor: [31, 78, 121]}, 
+                    styles: {fontSize: 10}, 
+                    margin: {left: 10, right: 10}
+                });
+
+                document.body.removeChild(tempDiv);
+
+                // saves to device
+                pdf.save("pastry-count.pdf");
+            }
+        </script>
+    </body>
+</html>
