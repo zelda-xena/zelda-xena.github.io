@@ -12,14 +12,25 @@
         <a href="index.html"><button class="link-btn"> Go to Count! </button></a><br><br>
 
         <div class="form-container">
-            <input type="text" id="pastryName" name="pastryName" style="width: 250px;" placeholder="Enter Pastry">
+            <input list="pastries" id="pastryName" name="pastryName" style="width: 250px;" placeholder="Enter Pastry"/>
+            <datalist id="pastries">
+                <option> Apple Turnover </option>
+                <option> Butter Croissant </option>
+                <option> Cheese Danish </option>
+                <option> Chocolate Croissant </option>
+                <option> Cinnamon Raisin Bagel </option>
+                <option> Everything Bagel </option>
+                <option> Plain Bagel </option>
+                <option> Vegan Croissant </option>
+            </datalist>
             <button class="add-btn" onclick="addPastryRow()"> Add </button><br>
         </div>
 
         <div class="contaner2"> 
             <label> Date: </label>
             <input type="date" id="current-date">
-            <button class="download-btn" onclick="downloadPDF()"> Download Count as PDF </button><br><br>
+            <button class="download-btn" onclick="downloadPDF()"> Download Count as PDF </button>
+            <button class="clear-btn" onclick="clearTable()"> Clear Table </button><br><br>
         </div>
 
         <table id="countTable">
@@ -41,34 +52,58 @@
         </table><br>
 
         <script>
+            // set to today's date
             document.getElementById("current-date").valueAsDate = new Date();
 
+            // load saved table on page load
+            document.addEventListener("DOMContentLoaded", loadTableData);
+            
+            // add new pastry to table
             function addPastryRow() {
                 const pastryInput = document.getElementById("pastryName");
                 const pastryName = pastryInput.value.trim();
-                const tableBody = document.getElementById("tableBody");
-                const row = tableBody.insertRow();
 
                 if(pastryName === "") {
-                    alert("Please enter Pastry!");
+                    alert("Please Enter Pastry!");
                     return;
                 }
 
-                row.insertCell(0).innerHTML = 
-                    '<button class="delete-btn" onclick="deleteRow(this)"> X </button>';
-                row.insertCell(1).textContent = pastryName;
-                row.insertCell(2).innerHTML = 
-                    '<input type="number" class="current-qty" min="0" value="0" oninput="calculateEndQty(this)">';
-                row.insertCell(3).innerHTML = 
-                    '<input type="number" class="received-qty" min="0" value="0" oninput="calculateEndQty(this)">';
-                row.insertCell(4).innerHTML = 
-                    '<input type="number" class="sold-qty" min="0" value="0" oninput="calculateEndQty(this)">';
-                row.insertCell(5).innerHTML = 
-                    '<input type="number" class="wasted-qty" min="0" value="0" oninput="calculateEndQty(this)">';
-                row.insertCell(6).textContent = 0;
+                createRowElement(pastryName, "", "", "", "");
+                saveTableData();
                 pastryInput.value = "";
             }
 
+            // helper function to build DOM rows
+            function createRowElement(pastryName, currentQty = 0, receivedQty = 0, soldQty = 0, wastedQty = 0) {
+                const tableBody = document.getElementById("tableBody");
+                const row = tableBody.insertRow();
+
+                row.insertCell(0).innerHTML = 
+                    '<button class="delete-btn" onclick="deletePastryRow(this)"> X </button>';
+                const nameCell = row.insertCell(1);
+                nameCell.textContent = pastryName;
+                nameCell.classList.add("pastry-name-cell");
+                row.insertCell(2).innerHTML =
+                    `<input type="number" class="current-qty" min="0" value="${currentQty}">`;
+                row.insertCell(3).innerHTML =
+                    `<input type="number" class="received-qty" min="0" value="${receivedQty}">`;
+                row.insertCell(4).innerHTML =
+                    `<input type="number" class="sold-qty" min="0" value="${soldQty}">`;
+                row.insertCell(5).innerHTML =
+                    `<input type="number" class="wasted-qty" min="0" value="${wastedQty}">`;
+                const endingQty = 
+                    Number(currentQty) + Number(receivedQty) - Number(soldQty) - Number(wastedQty);
+                row.insertCell(6).textContent = endingQty;
+                
+                row.querySelectorAll("input").forEach(input => {
+                    input.addEventListener("input", function() {
+                        calculateEndQty(this);
+                        saveTableData();
+                    });
+                });
+            }
+
+            // calculate end qty in table
             function calculateEndQty(input) {
                 const row = input.closest("tr");
                 const current = Number(row.querySelector(".current-qty").value) || 0;
@@ -80,10 +115,42 @@
                 row.cells[6].textContent = ending;
             }
 
-            function deleteRow(button) {
+            // delete pastry from table
+            function deletePastryRow(button) {
                 button.closest("tr").remove();
+                saveTableData();
             }
 
+            // collects current table data and saves to local storage
+            function saveTableData() {
+                const rowsData = [];
+                const rows = document.querySelectorAll("#tableBody tr");
+
+                rows.forEach(row => {
+                    rowsData.push({
+                        name: row.querySelector(".pastry-name-cell").textContent,
+                        currentQty: row.querySelector(".current-qty").value,
+                        receivedQty: row.querySelector(".received-qty").value,
+                        soldQty: row.querySelector(".sold-qty").value,
+                        wastedQty: row.querySelector(".wasted-qty").value
+                    });
+                });
+
+                localStorage.setItem("pastryTrackerData", JSON.stringify(rowsData));
+            }
+
+            // reads table data and rebuilds on page load
+            function loadTableData() {
+                const savedData = localStorage.getItem("pastryTableData");
+                if(savedData) {
+                    const rowsData = JSON.parse(savedData);
+                    rowsData.forEach(item => {
+                        createRowElement(item.name, item.currentQty, item.receivedQty, item.soldQty, item.wastedQty);
+                    });
+                }
+            }
+
+            // download table as PDF
             async function downloadPDF() {
                 const {jsPDF} = window.jspdf;
                 const tableClone = document.getElementById("countTable").cloneNode(true);
@@ -115,9 +182,9 @@
                 });
 
                 // header in pdf
-                pdf.setFontSize(20);
-                pdf.text("Pastry Tracker", 14, 15);
                 pdf.setFontSize(18);
+                pdf.text("Pastry Tracker", 14, 15);
+                pdf.setFontSize(16);
                 pdf.text(`Date: ${date}`, 14, 25);
                 //table in pdf
                 pdf.autoTable({
@@ -125,7 +192,7 @@
                     startY: 30,
                     theme: "grid",
                     headStyles: {fillColor: [31, 78, 121]}, 
-                    styles: {fontSize: 10}, 
+                    styles: {fontSize: 12}, 
                     margin: {left: 10, right: 10}
                 });
 
@@ -133,6 +200,12 @@
 
                 // saves to device
                 pdf.save("pastry-tracker.pdf");
+            }
+
+            // clears table on command
+            function clearTable() {
+                const tableBody = document.getElementById("tableBody");
+                tableBody.innerHTML = "";
             }
         </script>
     </body>
