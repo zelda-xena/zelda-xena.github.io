@@ -145,7 +145,7 @@
 
                 const currentDate = document.getElementById("current-date").value;
                 const [year, month, day] = currentDate.split("-");
-                const formatdate = `${month}${day}${year}`;
+                const formatDate = `${month}${day}${year}`;
 
                 const pdf = new jsPDF ({
                     orientation: "portrait",
@@ -172,7 +172,7 @@
                 document.body.removeChild(tempDiv);
 
                 // save to device
-                pdf.save(`pastry-count-${formatdate}.pdf`);
+                pdf.save(`pastry-count-${formatDate}.pdf`);
             }
 
             // clears table on command

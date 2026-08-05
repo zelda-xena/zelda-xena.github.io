@@ -176,6 +176,9 @@
                 document.body.appendChild(tempDiv);
 
                 const date = document.getElementById("current-date").value;
+                const [year, month, day] = date.split("-");
+                const formatDate = `${month}${day}${year}`;
+
                 const pdf = new jsPDF({
                     orientation: "landscape",
                     unit: "mm", 
@@ -200,7 +203,7 @@
                 document.body.removeChild(tempDiv);
 
                 // saves to device
-                pdf.save("pastry-tracker.pdf");
+                pdf.save(`pastry-tracker-${formatDate}.pdf`);
             }
 
             // clears table on command
