@@ -4,6 +4,14 @@ body {
         background-color: #f9f9f9;
     }
 
+input[type="list"] {
+    font-size: 15px;
+}
+
+input[type="date"] {
+    font-size: 15px;
+}
+
 .link-btn {
     border-radius: 3px;
     border: none;
@@ -12,6 +20,7 @@ body {
     width: 150px;
     height: 30px;
     font-weight: bold;
+    font-size: 15px;
 }
 
 .form-container {
@@ -36,6 +45,7 @@ body {
     width: 50px;
     height: 30px;
     font-weight: bold;
+    font-size: 15px;
 }
 
 table {
@@ -58,6 +68,7 @@ th {
 .qty-input {
         width: 80px;
         padding: 5px;
+        font-size: 15px;
     }
 
 .delete-btn {
@@ -80,6 +91,7 @@ th {
     height: 30px;
     font-weight: bold;
     margin-left: 20px;
+    font-size: 15px;
     }
 
 .clear-btn {
@@ -91,4 +103,5 @@ th {
     height: 30px;
     font-weight: bold;
     margin-left: 20px;
+    font-size: 15px;
     }

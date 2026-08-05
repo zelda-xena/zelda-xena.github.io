@@ -17,7 +17,7 @@
                 <option> Apple Turnover </option>
                 <option> Butter Croissant </option>
                 <option> Cheese Danish </option>
-                <option> Chocolate Croissant </option>
+                <option> Hazelnut Chocolate Croissant </option>
                 <option> Cinnamon Raisin Bagel </option>
                 <option> Everything Bagel </option>
                 <option> Plain Bagel </option>
@@ -49,7 +49,7 @@
         <script>
             // set to today's date
             document.getElementById("current-date").valueAsDate = new Date();
-
+            
             // load saved table on page load
             document.addEventListener("DOMContentLoaded", loadTableData);
 
@@ -143,7 +143,10 @@
                 tempDiv.appendChild(tableClone);
                 document.body.appendChild(tempDiv);
 
-                const date = document.getElementById("current-date").value;
+                const currentDate = document.getElementById("current-date").value;
+                const [year, month, day] = currentDate.split("-");
+                const formatdate = `${month}${day}${year}`;
+
                 const pdf = new jsPDF ({
                     orientation: "portrait",
                     unit: "mm",
@@ -154,7 +157,7 @@
                 pdf.setFontSize(18);
                 pdf.text("Pastry Tracker", 14, 15);
                 pdf.setFontSize(16);
-                pdf.text(`Date: ${date}`, 14, 25);
+                pdf.text(`Date: ${formatdate}`, 14, 25);
 
                 // table in PDF
                 pdf.autoTable({
@@ -169,7 +172,7 @@
                 document.body.removeChild(tempDiv);
 
                 // save to device
-                pdf.save("pastry-count.pdf");
+                pdf.save(`pastry-count-${formatdate}.pdf`);
             }
 
             // clears table on command

@@ -17,7 +17,7 @@
                 <option> Apple Turnover </option>
                 <option> Butter Croissant </option>
                 <option> Cheese Danish </option>
-                <option> Chocolate Croissant </option>
+                <option> Hazelnut Chocolate Croissant </option>
                 <option> Cinnamon Raisin Bagel </option>
                 <option> Everything Bagel </option>
                 <option> Plain Bagel </option>
@@ -97,6 +97,7 @@
                 
                 row.querySelectorAll("input").forEach(input => {
                     input.addEventListener("input", function() {
+                        input.style.fontsize = "15px";
                         calculateEndQty(this);
                         saveTableData();
                     });
