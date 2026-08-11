@@ -180,6 +180,106 @@
                 tableBody.innerHTML = "";
                 saveTableData();
             }
+
+            // sfvunsfvnufnvunfuvnudnfvundufvnunfvnfv
+            function saveData() {
+
+                // Save checklist
+                const checklistData = [];
+
+                document.querySelectorAll(".checklist-container .checkbox-item")
+                    .forEach(item => {
+
+                        const name = item.querySelector("span").textContent.trim();
+                        const checked = item.querySelector("input[type='checkbox']").checked;
+
+                        checklistData.push({
+                            name,
+                            checked
+                        });
+                    });
+
+                localStorage.setItem(
+                    "pastryChecklistData",
+                    JSON.stringify(checklistData)
+                );
+
+                // Save table
+                const tableData = [];
+
+                document.querySelectorAll("#tableBody tr")
+                    .forEach(row => {
+
+                        const name =
+                            row.querySelector(".pastry-name-cell").textContent.trim();
+
+                        const qty =
+                            row.querySelector(".qty-input").value;
+
+                        tableData.push({
+                            name,
+                            qty
+                        });
+                    });
+
+                localStorage.setItem(
+                    "pastryCountData",
+                    JSON.stringify(tableData)
+                );
+            }
+
+            function loadData() {
+
+                    // Load checklist
+                    const savedChecklist =
+                        localStorage.getItem("pastryChecklistData");
+
+                    if (savedChecklist) {
+
+                        const checklist = document.querySelector(".checklist-container");
+
+                        // Clear default checklist
+                        checklist.innerHTML = "";
+
+                        JSON.parse(savedChecklist).forEach(item => {
+
+                            const label = document.createElement("label");
+
+                            label.className = "checkbox-item";
+
+                            label.innerHTML = `
+                                <button
+                                    class="deletelist-btn"
+                                    onclick="deletePastryList(this)">
+                                    X
+                                </button>
+
+                                <input
+                                    type="checkbox"
+                                    name="options"
+                                    ${item.checked ? "checked" : ""}
+                                    onchange="saveData()">
+
+                                <span>${item.name}</span>
+                            `;
+
+                            checklist.appendChild(label);
+                        });
+                    }
+
+                    // Load table
+                    const savedTable =
+                        localStorage.getItem("pastryCountData");
+
+                    if (savedTable) {
+
+                        const tableData = JSON.parse(savedTable);
+
+                        tableData.forEach(item => {
+                            createRowElement(item.name, item.qty);
+                        });
+                    }
+                }
         </script>
     </body>
 </html>
