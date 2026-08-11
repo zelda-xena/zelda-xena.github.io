@@ -104,12 +104,12 @@
                     rowsData.push({name, qty});
                 })
 
-                localStorage.setItem("pastryTableData", JSON.stringify(rowsData));
+                localStorage.setItem("pastryCountData", JSON.stringify(rowsData));
             }
 
             // reads table data and rebuilds on page load
             function loadTableData() {
-                const savedData = localStorage.getItem("pastryTableData");
+                const savedData = localStorage.getItem("pastryCountData");
                 if(savedData) {
                     const rowsData = JSON.parse(savedData);
                     rowsData.forEach(item => {
@@ -131,13 +131,13 @@
                 });
 
                 // replace inputs with values
-                tableClone.querySelectorAll("input.qty-input").forEach(input => {
-                    const value = input.value;
-                    input.parentElement.textContent = value;
+                tableClone.querySelectorAll("input").forEach(input => {
+                    input.parentElement.textContent = input.value;
                 })
 
                 // add cloned table temp to DOM
                 const tempDiv = document.createElement("div");
+
                 tempDiv.style.position = "absolute";
                 tempDiv.style.left = "-9999px";
                 tempDiv.appendChild(tableClone);
@@ -145,7 +145,7 @@
 
                 const currentDate = document.getElementById("current-date").value;
                 const [year, month, day] = currentDate.split("-");
-                const formatDate = `${month}${day}${year}`;
+                const formatDate = `${month}/${day}/${year}`;
 
                 const pdf = new jsPDF ({
                     orientation: "portrait",
@@ -157,8 +157,7 @@
                 pdf.setFontSize(18);
                 pdf.text("Pastry Tracker", 14, 15);
                 pdf.setFontSize(16);
-                pdf.text(`Date: ${formatdate}`, 14, 25);
-
+                pdf.text(`Date: ${formatDate}`, 14, 25);
                 // table in PDF
                 pdf.autoTable({
                     html: tableClone,

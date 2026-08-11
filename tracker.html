@@ -142,7 +142,7 @@
 
             // reads table data and rebuilds on page load
             function loadTableData() {
-                const savedData = localStorage.getItem("pastryTableData");
+                const savedData = localStorage.getItem("pastryTrackerData");
                 if(savedData) {
                     const rowsData = JSON.parse(savedData);
                     rowsData.forEach(item => {
@@ -177,7 +177,7 @@
 
                 const date = document.getElementById("current-date").value;
                 const [year, month, day] = date.split("-");
-                const formatDate = `${month}${day}${year}`;
+                const formatDate = `${month}/${day}/${year}`;
 
                 const pdf = new jsPDF({
                     orientation: "landscape",
@@ -210,6 +210,7 @@
             function clearTable() {
                 const tableBody = document.getElementById("tableBody");
                 tableBody.innerHTML = "";
+                saveTableData();
             }
         </script>
     </body>
