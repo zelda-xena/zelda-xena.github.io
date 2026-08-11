@@ -4,14 +4,6 @@ body {
         background-color: #f9f9f9;
     }
 
-input[type="list"] {
-    font-size: 15px;
-}
-
-input[type="date"] {
-    font-size: 15px;
-}
-
 .link-btn {
     border-radius: 3px;
     border: none;
@@ -23,30 +15,97 @@ input[type="date"] {
     font-size: 15px;
 }
 
-.form-container {
-    margin-bottom: 20px;
-    background: white;
-    padding: 12px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    max-width: 500px;
-    }
-
-#pastryName {
-    width: 80px;
-    padding: 5px;
+.main-container {
+    display: flex;
+    gap: 45px;
+    align-items: flex-start;
 }
 
-.add-btn {
+.container2 {
+    flex: 1;
+}
+
+.checklist-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    width: 250px;
+    background-color: #fff;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-item:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+#current-date, #pastryList {
+    font-size: 15px;
+}
+
+.deletelist-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    width: 20px;
+    height: 20px;
+    }
+
+.addlist-btn, .add-btn {
     border-radius: 3px;
     border: none;
     color: white;
     background-color: #006400;
-    width: 50px;
+    width: 25px;
+    height: 25px;
+    font-weight: bold;
+    font-size: 20px;
+    }
+
+.download-btn {
+    border-radius: 3px;
+    border: none;
+    color: white;
+    background-color: #006400;
+    width: 200px;
     height: 30px;
     font-weight: bold;
     font-size: 15px;
-}
+    margin-left: 20px;
+    }
+
+.clear-btn {
+    border-radius: 3px;
+    border: none;
+    color: white;
+    background-color: #006400;
+    width: 100px;
+    height: 30px;
+    font-weight: bold;
+    font-size: 15px;
+    margin-left: 20px;
+    }
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    width: 30px;
+    height: 30px;
+    display: block;
+    margin: 0 auto;
+    }
 
 table {
         width: 100%;
@@ -69,39 +128,4 @@ th {
         width: 80px;
         padding: 5px;
         font-size: 15px;
-    }
-
-.delete-btn {
-    background: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    width: 30px;
-    height: 30px;
-    display: block;
-    margin: 0 auto;
-    }
-
-.download-btn {
-    border-radius: 3px;
-    border: none;
-    color: white;
-    background-color: #006400;
-    width: 200px;
-    height: 30px;
-    font-weight: bold;
-    margin-left: 20px;
-    font-size: 15px;
-    }
-
-.clear-btn {
-    border-radius: 3px;
-    border: none;
-    color: white;
-    background-color: #006400;
-    width: 100px;
-    height: 30px;
-    font-weight: bold;
-    margin-left: 20px;
-    font-size: 15px;
     }
