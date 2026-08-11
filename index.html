@@ -11,275 +11,252 @@
 
         <a href="tracker.html"><button class="link-btn"> Go to Tracker! </button></a><br><br>
 
-        <div class="form-container">
-            <input list="pastries" id="pastryName" name="pastryName" style="width: 250px;" placeholder="Enter Pastry"/>
-            <datalist id="pastries">
-                <option> Apple Turnover </option>
-                <option> Butter Croissant </option>
-                <option> Cheese Danish </option>
-                <option> Hazelnut Chocolate Croissant </option>
-                <option> Cinnamon Raisin Bagel </option>
-                <option> Everything Bagel </option>
-                <option> Plain Bagel </option>
-                <option> Vegan Croissant </option>
-            </datalist>
-            <button class="add-btn" onclick="addPastryRow()"> Add </button><br>
-        </div>
+        <div class="main-container"> 
+            <!-- add new pastry to checklist -->
+            <div class="container1">
+                <input type="text" id="pastryList" name="pastryList" style="width: 250px;" placeholder="Add Pastry to List"/>
+                <button class="addlist-btn" onclick="addPastryList()"> + </button><br><br>
+                 <!-- checkboxes to choose pastries -->
+                <div class="checklist-container"> 
+                    <label class="checkbox-item"> 
+                        <button class="deletelist-btn" onclick="deletePastryList(this)"> X </button>
+                        <input type="checkbox" name="options" value="1" onchange="saveData()"> 
+                        <span> Butter Croissant </span>
+                    </label>
+                    <label class="checkbox-item"> 
+                        <button class="deletelist-btn" onclick="deletePastryList(this)"> X </button>
+                        <input type="checkbox" name="options" value="2" onchange="saveData()"> 
+                        <span> Cinnamon Raisin Bagel </span>
+                    </label>
+                    <label class="checkbox-item"> 
+                        <button class="deletelist-btn" onclick="deletePastryList(this)"> X </button>
+                        <input type="checkbox" name="options" value="3" onchange="saveData()"> 
+                        <span> Everything Bagel </span>
+                    </label>
+                    <label class="checkbox-item"> 
+                        <button class="deletelist-btn" onclick="deletePastryList(this)"> X </button>
+                        <input type="checkbox" name="options" value="4" onchange="saveData()"> 
+                        <span> Hazelnut Chocolate Croissant </span>
+                    </label>
+                    <label class="checkbox-item">
+                        <button class="deletelist-btn" onclick="deletePastryList(this)"> X </button> 
+                        <input type="checkbox" name="options" value="5" onchange="saveData()"> 
+                        <span> Plain Bagel </span>
+                    </label>
+                    <label class="checkbox-item"> 
+                        <button class="deletelist-btn" onclick="deletePastryList(this)"> X </button>
+                        <input type="checkbox" name="options" value="6" onchange="saveData()"> 
+                        <span> Vegan Croissant </span>
+                    </label>
+                </div>
+            </div>
 
-        <div class="contaner2"> 
-            <label> Date: </label>
-            <input type="date" id="current-date">
-            <button class="download-btn" onclick="downloadPDF()"> Download Count as PDF </button>
-            <button class="clear-btn" onclick="clearTable()"> Clear Table </button><br><br>
-        </div>
-
-        <table id="countTable">
-            <thead>
-                <tr>
-                    <th>   </th>
-                    <th> Pastry </th>
-                    <th> Quantity </th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <!-- new dynamic rows that will be added based on input -->
-            </tbody>
-        </table><br>
-
-        <script>
-            // set to today's date
-            document.getElementById("current-date").valueAsDate = new Date();
+            <div class="container2"> 
+                <label> Add Selected Pastries to Table </label>
+                <button class="add-btn" onclick="addPastryRow()"> + </button><br><br>
+                <label> Date: </label>
+                <input type="date" id="current-date">
+                <button class="download-btn" onclick="downloadPDF()"> Download Count as PDF</button>
+                <button class="clear-btn" onclick="clearTable()"> Clear Table </button><br><br>
             
-            // load saved table on page load
-            document.addEventListener("DOMContentLoaded", loadTableData);
-
-            // add new pastry to table
-            function addPastryRow() {
-                const pastryInput = document.getElementById("pastryName");
-                const pastryName = pastryInput.value.trim();
-
-                if(pastryName === "") {
-                    alert("Please Enter Pastry!");
-                    return;
-                }
-
-                // call helper function to build row structure
-                createRowElement(pastryName, "");
-                // save updated table to local storage
-                saveTableData();
-                pastryInput.value = "";
-            }
-
-            // helper function to build DOM rows
-            function createRowElement(name, qty) {
-                const tableBody = document.getElementById("tableBody");
-                const row = tableBody.insertRow();
-
-                row.insertCell(0).innerHTML =
-                    '<button class="delete-btn" onclick="deletePastryRow(this)"> X </button>';
-                const nameCell = row.insertCell(1);
-                nameCell.textContent = name;
-                nameCell.classList.add("pastry-name-cell");
-                row.insertCell(2).innerHTML =
-                    `<input type="number" class="qty-input" min="0" value="${qty}">`;
-            
-                // autosave when user makes qty changes
-                row.querySelector('.qty-input').addEventListener('input', saveTableData);
-            }
-
-            // delete pastry from table
-            function deletePastryRow(button) {
-                button.closest("tr").remove();
-                saveTableData(); // autosave changes
-            }
-
-            // collects current table data and saves to local storage
-            function saveTableData() {
-                const rowsData = [];
-                const rows = document.querySelectorAll("#tableBody tr");
-
-                rows.forEach(row => {
-                    const name = row.querySelector(".pastry-name-cell").textContent;
-                    const qty = row.querySelector(".qty-input").value;
-                    rowsData.push({name, qty});
-                })
-
-                localStorage.setItem("pastryCountData", JSON.stringify(rowsData));
-            }
-
-            // reads table data and rebuilds on page load
-            function loadTableData() {
-                const savedData = localStorage.getItem("pastryCountData");
-                if(savedData) {
-                    const rowsData = JSON.parse(savedData);
-                    rowsData.forEach(item => {
-                        createRowElement(item.name, item.qty);
-                    });
-                }
-            }
-
-            // download table as PDF
-            async function downloadPDF() {
-                const {jsPDF} = window.jspdf;
-                const tableClone = document.getElementById("countTable").cloneNode(true);
-
-                // remove first col from every row
-                tableClone.querySelectorAll("tr").forEach(row => {
-                    if(row.cells.length > 0) {
-                        row.deleteCell(0);
-                    }
-                });
-
-                // replace inputs with values
-                tableClone.querySelectorAll("input").forEach(input => {
-                    input.parentElement.textContent = input.value;
-                })
-
-                // add cloned table temp to DOM
-                const tempDiv = document.createElement("div");
-
-                tempDiv.style.position = "absolute";
-                tempDiv.style.left = "-9999px";
-                tempDiv.appendChild(tableClone);
-                document.body.appendChild(tempDiv);
-
-                const currentDate = document.getElementById("current-date").value;
-                const [year, month, day] = currentDate.split("-");
-                const formatDate = `${month}/${day}/${year}`;
-
-                const pdf = new jsPDF ({
-                    orientation: "portrait",
-                    unit: "mm",
-                    format: "a4"
-                });
-
-                // header in PDF
-                pdf.setFontSize(18);
-                pdf.text("Pastry Tracker", 14, 15);
-                pdf.setFontSize(16);
-                pdf.text(`Date: ${formatDate}`, 14, 25);
-                // table in PDF
-                pdf.autoTable({
-                    html: tableClone,
-                    startY: 30,
-                    theme: "grid",
-                    headStyles: {fillColor: [31, 78, 121]},
-                    styles: {fontSize: 12},
-                    margin: {left: 10, right: 10}
-                });
-
-                document.body.removeChild(tempDiv);
-
-                // save to device
-                pdf.save(`pastry-count-${formatDate}.pdf`);
-            }
-
-            // clears table on command
-            function clearTable() {
-                const tableBody = document.getElementById("tableBody");
-                tableBody.innerHTML = "";
-                saveTableData();
-            }
-
-            // sfvunsfvnufnvunfuvnudnfvundufvnunfvnfv
-            function saveData() {
-
-                // Save checklist
-                const checklistData = [];
-
-                document.querySelectorAll(".checklist-container .checkbox-item")
-                    .forEach(item => {
-
-                        const name = item.querySelector("span").textContent.trim();
-                        const checked = item.querySelector("input[type='checkbox']").checked;
-
-                        checklistData.push({
-                            name,
-                            checked
-                        });
-                    });
-
-                localStorage.setItem(
-                    "pastryChecklistData",
-                    JSON.stringify(checklistData)
-                );
-
-                // Save table
-                const tableData = [];
-
-                document.querySelectorAll("#tableBody tr")
-                    .forEach(row => {
-
-                        const name =
-                            row.querySelector(".pastry-name-cell").textContent.trim();
-
-                        const qty =
-                            row.querySelector(".qty-input").value;
-
-                        tableData.push({
-                            name,
-                            qty
-                        });
-                    });
-
-                localStorage.setItem(
-                    "pastryCountData",
-                    JSON.stringify(tableData)
-                );
-            }
-
-            function loadData() {
-
-                    // Load checklist
-                    const savedChecklist =
-                        localStorage.getItem("pastryChecklistData");
-
-                    if (savedChecklist) {
-
-                        const checklist = document.querySelector(".checklist-container");
-
-                        // Clear default checklist
-                        checklist.innerHTML = "";
-
-                        JSON.parse(savedChecklist).forEach(item => {
-
-                            const label = document.createElement("label");
-
-                            label.className = "checkbox-item";
-
-                            label.innerHTML = `
-                                <button
-                                    class="deletelist-btn"
-                                    onclick="deletePastryList(this)">
-                                    X
-                                </button>
-
-                                <input
-                                    type="checkbox"
-                                    name="options"
-                                    ${item.checked ? "checked" : ""}
-                                    onchange="saveData()">
-
-                                <span>${item.name}</span>
-                            `;
-
-                            checklist.appendChild(label);
-                        });
-                    }
-
-                    // Load table
-                    const savedTable =
-                        localStorage.getItem("pastryCountData");
-
-                    if (savedTable) {
-
-                        const tableData = JSON.parse(savedTable);
-
-                        tableData.forEach(item => {
-                            createRowElement(item.name, item.qty);
-                        });
-                    }
-                }
-        </script>
+                <table id="countTable"> 
+                    <thead>
+                        <tr>
+                            <th> </th>
+                            <th> Pastry </th>
+                            <th> Quantity </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"> 
+                        <!-- new dynamic rows that will be added based on input-->
+                    </tbody> 
+                </table>
+            </div>
+        </div>
     </body>
+
+    <script>
+        // set to today's date
+        document.getElementById("current-date").valueAsDate = new Date();
+        
+        // load saved table on page load
+        document.addEventListener("DOMContentLoaded", loadData);
+
+        // add new pastry to check list
+        function addPastryList() {
+            const listInput = document.getElementById("pastryList");
+            const pastryName = listInput.value.trim();
+
+            if(pastryName === "") {
+                alert("Please Enter Pastry!");
+                return;
+            }
+
+            const checklist = document.querySelector(".checklist-container");
+            const label = document.createElement("label");
+
+            label.className = "checkbox-item";
+            label.innerHTML = `<button class="deletelist-btn" onclick="deletePastryList(this)"> X </button>
+                            <input type="checkbox" name="options"> 
+                            <span> ${pastryName} </span>`;
+            checklist.appendChild(label);
+            saveData();
+            listInput.value = ""; // clears input field
+        }
+
+        // delete pastry from checklist
+        function deletePastryList(button) {
+            button.parentElement.remove();
+            saveData();
+        }
+
+        // add new pastry to table
+        function addPastryRow() {
+            const checkedItems = document.querySelectorAll(".checklist-container input[type='checkbox']:checked");
+            if(checkedItems.length === 0) {
+                alert("Please Select One or More Pastries!");
+                return;
+            }
+
+            checkedItems.forEach(checkbox => {
+                const pastryName = checkbox.parentElement.querySelector("span").textContent.trim();
+                createRowElement(pastryName, "");
+                checkbox.checked = false; // checkbox goes back to false after adding
+            });
+            saveData();
+        }
+
+        // helper function to build on DOM rows
+        function createRowElement(name, qty) {
+            const tableBody = document.getElementById("tableBody");
+            const row = document.createElement("tr");
+
+            row.innerHTML = `<td>
+                                <button class="delete-btn" onclick="deletePastryRow(this)"> X </button>
+                            </td>
+                            <td class="pastry-name-cell"> ${name} </td>
+                            <td>
+                                <input type="number" class="qty-input" min="0" value="${qty}" onchange="saveData()>"
+                            </td>`;
+            tableBody.appendChild(row);
+        }
+
+        // delete pastry from table
+        function deletePastryRow(button) {
+            button.closest("tr").remove();
+            saveData();
+        }
+
+        // collects current page data and saves to local storage
+        function saveData() {
+            // save checklist data
+            const checklistData = [];
+            document.querySelectorAll(".checklist-container .checkbox-item").forEach(item => {
+                const name = item.querySelector("span").textContent.trim();
+                const checked = item.querySelector("input[type='checkbox']").checked;
+                checklistData.push({name, checked});
+            });
+            localStorage.setItem("pastryListData", JSON.stringify(checklistData));
+        
+            // save table data
+            const tableData = [];
+            document.querySelectorAll("#tableBody tr").forEach(row => {
+                const name = row.querySelector(".pastry-name-cell").textContent.trim();
+                const qty = row.querySelector(".qty-input").value;
+                tableData.push({name, qty});
+            });
+            localStorage.setItem("pastryCountData", JSON.stringify(tableData));
+        }
+
+        // reads page data and rebuilds on page load
+        function loadData() {
+            // load checklist
+            const savedChecklist = localStorage.getItem("pastryListData");
+            if(savedChecklist) {
+                const checklist = document.querySelector(".checklist-container");
+                // clear default checklist
+                checklist.innerHTML = "";
+                JSON.parse(savedChecklist).forEach(item => {
+                    const label = document.createElement("label");
+                    label.className = "checkbox-item";
+                    label.innerHTML = `<button class="deletelist-btn" onclick="deletePastryList(this)"> X </button>
+                                    <input type="checkbox" name="options" ${item.checked ? "checked" : ""} onchange="saveData()"> 
+                                    <span> ${item.name} </span>`;
+                    checklist.appendChild(label);
+                });
+            }
+
+            // load table
+            const savedTable = localStorage.getItem("pastryCountData");
+            if(savedTable) {
+                const table = JSON.parse(savedTable);
+                table.forEach(item => {
+                    createRowElement(item.name, item.qty);
+                });
+            }
+        }
+
+        // download table as PDF
+        async function downloadPDF() {
+            const {jsPDF} = window.jspdf;
+            const tableClone = document.getElementById("countTable").cloneNode(true);
+
+            // remove first col from every row
+            tableClone.querySelectorAll("tr").forEach(row => {
+                if(row.cells.length > 0) {
+                    row.deleteCell(0);
+                }
+            });
+
+            // replace inputs with values
+            tableClone.querySelectorAll("input").forEach(input => {
+                input.parentElement.textContent = input.value;
+            })
+
+            // add cloned table temp to DOM
+            const tempDiv = document.createElement("div");
+
+            tempDiv.style.position = "absolute";
+            tempDiv.style.left = "-9999px";
+            tempDiv.appendChild(tableClone);
+            document.body.appendChild(tempDiv);
+
+            const currentDate = document.getElementById("current-date").value;
+            const [year, month, day] = currentDate.split("-");
+            const formatDate = `${month}/${day}/${year}`;
+
+            const pdf = new jsPDF ({
+                orientation: "portrait",
+                unit: "mm",
+                format: "a4"
+            });
+
+            // header in PDF
+            pdf.setFontSize(18);
+            pdf.text("Pastry Tracker", 14, 15);
+            pdf.setFontSize(16);
+            pdf.text(`Date: ${formatDate}`, 14, 25);
+            // table in PDF
+            pdf.autoTable({
+                html: tableClone,
+                startY: 30,
+                theme: "grid",
+                headStyles: {fillColor: [31, 78, 121]},
+                styles: {fontSize: 12},
+                margin: {left: 10, right: 10}
+            });
+
+            document.body.removeChild(tempDiv);
+
+            // save to device
+            pdf.save(`pastry-count-${formatDate}.pdf`);
+        }
+
+        // clears table
+        function clearTable() {
+            const tableBody = document.getElementById("tableBody");
+            tableBody.innerHTML = "";
+            saveData();
+        }
+    </script>
 </html>
