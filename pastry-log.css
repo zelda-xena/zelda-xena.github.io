@@ -124,7 +124,7 @@ th {
     color: white;
     }
 
-.qty-input {
+.qty-input, .current-qty, .received-qty, .sold-qty, .wasted-qty, .ending-qty {
         width: 80px;
         padding: 5px;
         font-size: 15px;

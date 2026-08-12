@@ -56,7 +56,7 @@
                 <button class="add-btn" onclick="addPastryRow()"> + </button><br><br>
                 <label> Date: </label>
                 <input type="date" id="current-date">
-                <button class="download-btn" onclick="downloadPDF()"> Download Count as PDF</button>
+                <button class="download-btn" onclick="downloadPDF()"> Download Table as PDF</button>
                 <button class="clear-btn" onclick="clearTable()"> Clear Table </button><br><br>
             
                 <table id="countTable"> 
@@ -136,7 +136,7 @@
                             </td>
                             <td class="pastry-name-cell"> ${name} </td>
                             <td>
-                                <input type="number" class="qty-input" min="0" value="${qty}" onchange="saveData()>"
+                                <input type="number" class="qty-input" min="0" value="${qty}" onchange="saveData()">
                             </td>`;
             tableBody.appendChild(row);
         }
@@ -233,7 +233,7 @@
 
             // header in PDF
             pdf.setFontSize(18);
-            pdf.text("Pastry Tracker", 14, 15);
+            pdf.text("Pastry Count", 14, 15);
             pdf.setFontSize(16);
             pdf.text(`Date: ${formatDate}`, 14, 25);
             // table in PDF
