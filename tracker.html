@@ -84,12 +84,12 @@
         document.getElementById("current-date").valueAsDate = new Date();
         
         // load saved table on page load
-        document.addEventListener("DOMContentLoaded", loadData);
+        document.addEventListener("DOMContentLoaded", loadData, alphabetizeChecklist);
 
         // add new pastry to check list
         function addPastryList() {
             const listInput = document.getElementById("pastryList");
-            const pastryName = listInput.value.trim();
+            const pastryName = formatCheckList(listInput.value.trim());
 
             if(pastryName === "") {
                 alert("Please Enter Pastry!");
@@ -104,8 +104,32 @@
                             <input type="checkbox" name="options"> 
                             <span> ${pastryName} </span>`;
             checklist.appendChild(label);
+            alphabetizeChecklist();
             saveData();
             listInput.value = ""; // clears input field
+        }
+
+        // helper function to format the pastry title
+        function formatCheckList(name) {
+            return name.toLowerCase()
+                        .split(" ")
+                        .filter(word => word.length > 0)
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(" ");
+        }
+
+        // helper function to sort checklist in alphabetical order
+        function alphabetizeChecklist() {
+            const checklist = document.querySelector(".checklist-container");
+            const items = Array.from(checklist.querySelectorAll(".checkbox-item"));
+
+            items.sort((a, b) => {
+                const nameA = a.querySelector("span").textContent.trim();
+                const nameB = b.querySelector("span").textContent.trim();
+                return nameA.localeCompare(nameB);
+            });
+            
+            items.forEach(item => checklist.appendChild(item));
         }
 
         // delete pastry from checklist
@@ -221,6 +245,8 @@
                                     <span> ${item.name} </span>`;
                     checklist.appendChild(label);
                 });
+
+                alphabetizeChecklist();
             }
 
             // load table
