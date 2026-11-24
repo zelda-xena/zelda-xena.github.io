@@ -9,7 +9,7 @@ body {
     border: none;
     color: white;
     background-color: #708090;
-    width: 150px;
+    width: 200px;
     height: 30px;
     font-weight: bold;
     font-size: 15px;
@@ -90,6 +90,18 @@ body {
     color: white;
     background-color: #006400;
     width: 100px;
+    height: 30px;
+    font-weight: bold;
+    font-size: 15px;
+    margin-left: 20px;
+    }
+
+.reset-btn {
+    border-radius: 3px;
+    border: none;
+    color: white;
+    background-color: #006400;
+    width: 150px;
     height: 30px;
     font-weight: bold;
     font-size: 15px;
